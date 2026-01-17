@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - QR-Asist{% endblock %}
+
+{% block header %}Bienvenido a QR-Asist{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <div class="welcome-card">
+        <h3>📱 Sistema de Control de Asistencia con Códigos QR</h3>
+        <p>Bienvenido al sistema de control de asistencia escolar. Selecciona una opción del menú lateral para comenzar.</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h4>Generar QR</h4>
+            <p>Crea códigos QR únicos para cada alumno. Carga un CSV o agrega alumnos uno por uno.</p>
+            <a href="/generar-qr" class="btn btn-primary">Ir al módulo</a>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📷</div>
+            <h4>Leer QR</h4>
+            <p>Registra la asistencia escaneando los códigos QR de los alumnos con la cámara.</p>
+            <a href="/leer-qr" class="btn btn-secondary">Próximamente</a>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h4>Consolidar</h4>
+            <p>Genera reportes en Excel consolidando los registros de asistencia de todas las laptops.</p>
+            <a href="/consolidar" class="btn btn-secondary">Próximamente</a>
+        </div>
+    </div>
+    
+    <div class="info-section">
+        <h3>ℹ️ Información del Sistema</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Funciona sin internet:</strong>
+                <p>El sistema opera completamente offline en la entrada del colegio.</p>
+            </div>
+            <div class="info-item">
+                <strong>Registros locales:</strong>
+                <p>Cada laptop guarda los registros de asistencia en archivos locales.</p>
+            </div>
+            <div class="info-item">
+                <strong>Sincronización manual:</strong>
+                <p>Al conectarse al WiFi, se envían los registros a la PC central.</p>
+            </div>
+            <div class="info-item">
+                <strong>Reportes automáticos:</strong>
+                <p>La PC central consolida y genera reportes en Excel.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,544 @@
+/* ==================== RESET Y VARIABLES ==================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --secondary: #0ea5e9;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --dark: #1e293b;
+    --gray: #64748b;
+    --light-gray: #f1f5f9;
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--light-gray);
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+/* ==================== LAYOUT PRINCIPAL ==================== */
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ==================== BARRA LATERAL ==================== */
+
+.sidebar {
+    width: 250px;
+    background: var(--dark);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    box-shadow: var(--shadow-lg);
+}
+
+.logo {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.logo p {
+    font-size: 0.875rem;
+    color: var(--gray);
+}
+
+.nav-menu {
+    flex: 1;
+    padding: 1rem 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1.5rem;
+    color: var(--white);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left-color: var(--primary);
+}
+
+.nav-item.active {
+    background: rgba(79, 70, 229, 0.2);
+    border-left-color: var(--primary);
+}
+
+.nav-item .icon {
+    font-size: 1.25rem;
+}
+
+.nav-item .text {
+    font-size: 0.938rem;
+}
+
+.sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+    color: var(--gray);
+    text-align: center;
+}
+
+/* ==================== CONTENIDO PRINCIPAL ==================== */
+
+.main-content {
+    margin-left: 250px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: var(--white);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.header h2 {
+    font-size: 1.75rem;
+    color: var(--dark);
+}
+
+.content {
+    padding: 2rem;
+    max-width: 1400px;
+    width: 100%;
+}
+
+/* ==================== TARJETAS ==================== */
+
+.card {
+    background: var(--white);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+}
+
+/* ==================== FORMULARIOS ==================== */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+}
+
+.form-input,
+.form-select {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    font-size: 0.938rem;
+    transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    cursor: pointer;
+}
+
+/* ==================== CARGA DE ARCHIVOS ==================== */
+
+.file-upload {
+    margin-top: 1rem;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--light-gray);
+    border: 2px dashed var(--border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.file-label:hover {
+    border-color: var(--primary);
+    background: rgba(79, 70, 229, 0.05);
+}
+
+.file-label .icon {
+    font-size: 1.5rem;
+}
+
+/* ==================== BOTONES ==================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.938rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    justify-content: center;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: var(--white);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #0284c7;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: var(--success);
+    color: var(--white);
+}
+
+.btn-success:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: #dc2626;
+}
+
+/* ==================== LISTA DE ALUMNOS ==================== */
+
+.alumnos-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+}
+
+.alumno-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--light-gray);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+.alumno-item:last-child {
+    margin-bottom: 0;
+}
+
+.alumno-info {
+    display: flex;
+    gap: 1rem;
+}
+
+.alumno-id {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.alumno-nombre {
+    color: var(--dark);
+}
+
+.alumno-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.813rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray);
+    font-style: italic;
+}
+
+/* ==================== GRID DE ACCIONES ==================== */
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* ==================== ESTADO ==================== */
+
+.estado-card {
+    border-left: 4px solid var(--primary);
+}
+
+.estado-contenido {
+    font-size: 0.938rem;
+}
+
+.estado-success {
+    color: var(--success);
+}
+
+.estado-error {
+    color: var(--danger);
+}
+
+.estado-warning {
+    color: var(--warning);
+}
+
+/* ==================== PÁGINA DE INICIO ==================== */
+
+.welcome-section {
+    max-width: 1200px;
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--white);
+    padding: 3rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.welcome-card h3 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--white);
+}
+
+.welcome-card p {
+    font-size: 1.125rem;
+    opacity: 0.95;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--dark);
+}
+
+.feature-card p {
+    color: var(--gray);
+    margin-bottom: 1.5rem;
+    font-size: 0.938rem;
+}
+
+.info-section {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+}
+
+.info-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item strong {
+    display: block;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.info-item p {
+    color: var(--gray);
+    font-size: 0.938rem;
+}
+
+/* ==================== PLACEHOLDER ==================== */
+
+.placeholder-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.icon-large {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+}
+
+.features-preview {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.features-preview h4 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+.features-preview ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.features-preview li {
+    padding: 0.5rem 0;
+    color: var(--gray);
+    font-size: 0.938rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .main-content {
+        margin-left: 200px;
+    }
+    
+    .content {
+        padding: 1rem;
+    }
+    
+    .form-grid,
+    .features-grid,
+    .info-grid,
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}

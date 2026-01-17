@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}QR-Asist{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Barra lateral -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>🎓 QR-Asist</h1>
+                <p>Sistema de Asistencia</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}">
+                    <span class="icon">🏠</span>
+                    <span class="text">Inicio</span>
+                </a>
+                
+                <a href="/generar-qr" class="nav-item {% if 'generar' in request.path %}active{% endif %}">
+                    <span class="icon">📱</span>
+                    <span class="text">Generar QR</span>
+                </a>
+                
+                <a href="/leer-qr" class="nav-item {% if 'leer' in request.path %}active{% endif %}">
+                    <span class="icon">📷</span>
+                    <span class="text">Leer QR</span>
+                </a>
+                
+                <a href="/consolidar" class="nav-item {% if 'consolidar' in request.path %}active{% endif %}">
+                    <span class="icon">📊</span>
+                    <span class="text">Consolidar</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p>v1.0.0</p>
+                <p>© 2026</p>
+            </div>
+        </aside>
+        
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <header class="header">
+                <h2>{% block header %}QR-Asist{% endblock %}</h2>
+            </header>
+            
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

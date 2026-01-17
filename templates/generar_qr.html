@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Generar QR - QR-Asist{% endblock %}
+
+{% block header %}Generador de Códigos QR{% endblock %}
+
+{% block content %}
+<div class="generar-section">
+    
+    <!-- Sección: Cargar CSV -->
+    <div class="card">
+        <h3>📁 Cargar lista de alumnos (CSV)</h3>
+        <p class="help-text">El archivo CSV debe tener las columnas: ID, NOMBRE_COMPLETO</p>
+        
+        <div class="file-upload">
+            <input type="file" id="csvFile" accept=".csv" class="file-input">
+            <label for="csvFile" class="file-label">
+                <span class="icon">📄</span>
+                <span id="fileName">Seleccionar archivo CSV...</span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- Sección: Configuración -->
+    <div class="card">
+        <h3>📊 Configuración del grupo</h3>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nivel educativo:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="nivel" value="Primaria" checked>
+                        <span>Primaria (1-6)</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="nivel" value="Secundaria">
+                        <span>Secundaria (1-5)</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="grado">Grado:</label>
+                <select id="grado" class="form-select">
+                    <option value="1">1ro</option>
+                    <option value="2">2do</option>
+                    <option value="3">3ro</option>
+                    <option value="4">4to</option>
+                    <option value="5">5to</option>
+                    <option value="6">6to</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="seccion">Sección (1 letra):</label>
+                <input 
+                    type="text" 
+                    id="seccion" 
+                    class="form-input" 
+                    placeholder="Ej: A" 
+                    maxlength="1"
+                    pattern="[A-Za-z]"
+                    required
+                >
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sección: Agregar alumno individual -->
+    <div class="card">
+        <h3>👤 Agregar alumno individual</h3>
+        <p class="help-text">Para alumnos nuevos que se unen durante el año</p>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="alumnoId">ID del alumno:</label>
+                <input type="text" id="alumnoId" class="form-input" placeholder="Ej: A021">
+            </div>
+            
+            <div class="form-group">
+                <label for="alumnoNombre">Nombre completo:</label>
+                <input type="text" id="alumnoNombre" class="form-input" placeholder="Ej: Roberto Díaz Ruiz">
+            </div>
+        </div>
+        
+        <button id="btnAgregarAlumno" class="btn btn-secondary">
+            <span class="icon">➕</span>
+            Agregar alumno
+        </button>
+    </div>
+    
+    <!-- Sección: Lista de alumnos -->
+    <div class="card">
+        <h3>📋 Alumnos cargados</h3>
+        <p class="help-text">Total: <span id="totalAlumnos">0</span> alumnos</p>
+        
+        <div id="listaAlumnos" class="alumnos-list">
+            <p class="empty-state">No hay alumnos cargados. Carga un CSV o agrega alumnos individualmente.</p>
+        </div>
+    </div>
+    
+    <!-- Sección: Acciones -->
+    <div class="card">
+        <div class="actions-grid">
+            <button id="btnGenerarQR" class="btn btn-primary" disabled>
+                <span class="icon">🎨</span>
+                Generar Códigos QR
+            </button>
+            
+            <button id="btnGenerarPDF" class="btn btn-success" disabled>
+                <span class="icon">📄</span>
+                Crear PDF para imprimir
+            </button>
+            
+            <button id="btnLimpiar" class="btn btn-danger">
+                <span class="icon">🗑️</span>
+                Limpiar lista
+            </button>
+        </div>
+    </div>
+    
+    <!-- Sección: Estado -->
+    <div id="estadoSeccion" class="card estado-card" style="display: none;">
+        <h3 id="estadoTitulo">Estado</h3>
+        <div id="estadoContenido" class="estado-contenido">
+            <!-- El contenido se llenará dinámicamente -->
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/generar_qr.js') }}"></script>
+{% endblock %}

@@ -11,9 +11,12 @@ __pycache__/
 .Python
 
 # Datos sensibles y temporales
-registros/*.txt
+registro/*.txt
 reportes/*.xlsx
-datos/qr_codes/*.png
+datos/qr_codes/**/*.png
+datos/qr_codes/**/*.pdf
+datos/qr_codes/**/
+!datos/qr_codes/.gitkeep
 
 # IDEs
 .vscode/
@@ -24,3 +27,4 @@ datos/qr_codes/*.png
 # Sistema
 .DS_Store
 Thumbs.db
+datos/.~lock.*
