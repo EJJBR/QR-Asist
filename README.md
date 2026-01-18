@@ -68,12 +68,23 @@ Sistema moderno y eficiente para registrar la asistencia de alumnos utilizando c
 ### Software
 - Python 3.10 o superior
 - Cámara web (para el módulo de lectura)
+- Navegador moderno (Chrome, Firefox, Edge)
+  - Con soporte para getUserMedia (acceso a cámara)
+  - JavaScript habilitado
 - Sistema operativo: Windows, Linux o macOS
 
 ### Hardware Recomendado
-- **Laptops de entrada**: Procesador Dual-Core, 4GB RAM, cámara web
-- **PC central**: Procesador Quad-Core, 8GB RAM
-- **Red local**: Router WiFi o switch Ethernet
+- **Laptops de entrada**: 
+  - Procesador Dual-Core mínimo
+  - 4GB RAM
+  - Cámara web integrada o USB
+  - Resolución mínima: 1280x720
+- **PC central**: 
+  - Procesador Quad-Core
+  - 8GB RAM
+- **Red local**: 
+  - Router WiFi o switch Ethernet
+  - Velocidad mínima: 10 Mbps
 
 ---
 
@@ -211,17 +222,35 @@ A002,María García López
 A001|Juan Pérez González|Primaria|5|A
 ```
 
-### Módulo 2: Lector de QR ⏳ **EN DESARROLLO**
+### Módulo 2: Lector de QR ✅ **COMPLETADO**
 
-**Funcionalidades planificadas:**
-- Acceso a cámara web
-- Detección de QR en tiempo real
-- Registro de asistencias con timestamp
-- Prevención de duplicados (2 minutos)
-- Feedback visual y sonoro
-- Contador de asistencias del día
-- Envío manual a PC central
-- Funcionamiento 100% offline
+**Funcionalidades implementadas:**
+- ✅ Acceso a cámara web con getUserMedia
+- ✅ Detección de QR en tiempo real usando jsQR
+- ✅ Registro de asistencias con timestamp automático
+- ✅ Prevención de duplicados (tolerancia de 2 minutos)
+- ✅ Feedback visual (borde verde para éxito, amarillo para duplicados)
+- ✅ Feedback sonoro (beep al registrar)
+- ✅ Panel de información del último alumno registrado
+- ✅ Contador de asistencias del día
+- ✅ Lista de últimos 5 registros en tiempo real
+- ✅ Verificación automática de red (cada 10 segundos)
+- ✅ Modal de selección de archivos para envío
+- ✅ Envío múltiple de archivos a PC central
+- ✅ Estados de archivo: Actual, Pendiente, Enviado
+- ✅ Gestión inteligente de archivos con marcas .enviado
+- ✅ Funcionamiento 100% offline
+
+**Formato del archivo de registro:**
+```csv
+ID,NOMBRE_COMPLETO,NIVEL,GRADO,SECCION,FECHA,HORA,LAPTOP
+A001,Juan Pérez González,Primaria,5,A,2026-01-18,08:15:23,LAPTOP_A
+```
+
+**Nombre del archivo:**
+```
+registro/asistencia_LAPTOP_A_20260118.txt
+```
 
 ### Módulo 3: Consolidador ⏳ **PENDIENTE**
 
@@ -233,6 +262,36 @@ A001|Juan Pérez González|Primaria|5|A
 - Exportación a Excel
 - Reportes por grado y sección
 - Estadísticas de asistencia
+
+---
+
+## 📁 Archivos Generados por el Sistema
+
+### Códigos QR (Módulo 1):
+```
+datos/qr_codes/
+├── Primaria_5_A/
+│   ├── Juan_Pérez_González_QR.png
+│   ├── María_García_López_QR.png
+│   └── Primaria_5_A.pdf  (9 QR por página)
+└── Secundaria_3_B/
+    └── ...
+```
+
+### Registros de Asistencia (Módulo 2):
+```
+registro/
+├── asistencia_LAPTOP_A_20260118.txt
+├── asistencia_LAPTOP_A_20260118.txt.enviado  (marca de enviado)
+├── asistencia_LAPTOP_B_20260118.txt
+└── ...
+```
+
+### Reportes Consolidados (Módulo 3 - próximamente):
+```
+reportes/
+└── Asistencia_2026-01-18.xlsx
+```
 
 ---
 
@@ -276,34 +335,16 @@ Para compartir archivos entre laptops:
 | Módulo | Estado | Progreso |
 |--------|--------|----------|
 | **Generador de QR** | ✅ Completado | 100% |
-| **Lector de QR** | ⏳ En desarrollo | 0% |
+| **Lector de QR** | ✅ Completado | 100% |
 | **Consolidador** | ⏳ Pendiente | 0% |
 | **Compilación (.exe)** | ⏳ Pendiente | 0% |
 
 ### Próximos pasos:
-1. Implementar Módulo 2 (Lector de QR)
-2. Implementar Módulo 3 (Consolidador)
-3. Pruebas integradas con múltiples laptops
-4. Compilación a ejecutable portable con PyInstaller
-5. Documentación de usuario final
-
----
-
-## 🤝 Contribuir
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/NuevaCaracteristica`)
-3. Commit tus cambios (`git commit -m 'Agregar nueva característica'`)
-4. Push a la rama (`git push origin feature/NuevaCaracteristica`)
-5. Abre un Pull Request
-
----
-
-## 📝 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+1. Implementar Módulo 3 (Consolidador de reportes)
+2. Pruebas integradas con múltiples laptops
+3. Compilación a ejecutable portable con PyInstaller
+4. Documentación de usuario final
+5. Manual de instalación y configuración
 
 ---
 
@@ -325,6 +366,52 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 ## 📞 Soporte
 
 Si encuentras algún bug o tienes sugerencias, por favor abre un [issue](https://github.com/EJJBR/QR-Asist/issues).
+
+---
+
+## 🔧 Solución de Problemas
+
+### La cámara no funciona
+
+**Problema:** "Error al acceder a la cámara" o pantalla negra
+
+**Soluciones:**
+1. Dar permisos de cámara al navegador
+   - Chrome: Configuración → Privacidad → Cámara
+   - Firefox: Permisos → Cámara → Permitir
+2. Verificar que otra aplicación no esté usando la cámara
+3. Probar en otro navegador (Chrome es el más compatible)
+4. En Linux, verificar permisos: `sudo usermod -a -G video $USER`
+
+### No detecta códigos QR
+
+**Problema:** La cámara funciona pero no lee los QR
+
+**Soluciones:**
+1. Mejorar la iluminación
+2. Acercar/alejar el QR de la cámara
+3. Asegurar que el QR no esté arrugado o borroso
+4. Limpiar la lente de la cámara
+
+### "Sin conexión de red"
+
+**Problema:** No puede enviar archivos a la PC central
+
+**Soluciones:**
+1. Verificar que ambas máquinas estén en la misma red
+2. Hacer ping a la PC central: `ping 192.168.1.100`
+3. Verificar que la carpeta esté compartida correctamente
+4. En Windows, cambiar red de "Pública" a "Privada"
+5. Desactivar temporalmente el firewall para probar
+
+### Los registros no se guardan
+
+**Problema:** Los escaneos no aparecen en el archivo .txt
+
+**Soluciones:**
+1. Verificar permisos de escritura en la carpeta `registro/`
+2. Verificar que hay espacio en disco
+3. Revisar la consola del navegador (F12) para errores
 
 ---
 
