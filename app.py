@@ -11,6 +11,8 @@ import csv
 
 # Importar módulos del proyecto
 from modules.generador_qr import GeneradorQR
+from modules.lector_qr import LectorQR
+import config
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'qr-asist-secret-key-2026'
@@ -27,8 +29,9 @@ os.makedirs(QR_DIR, exist_ok=True)
 os.makedirs(REGISTROS_DIR, exist_ok=True)
 os.makedirs(REPORTES_DIR, exist_ok=True)
 
-# Instanciar generador de QR
+# Instanciar módulos
 generador = GeneradorQR()
+lector = LectorQR(laptop_id=config.LAPTOP_ID)
 
 # ==================== RUTAS DE PÁGINAS ====================
 
@@ -180,6 +183,96 @@ def agregar_alumno_api():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# ==================== API MÓDULO 2: LECTOR QR ====================
+
+@app.route('/api/registrar-asistencia', methods=['POST'])
+def registrar_asistencia_api():
+    """Registrar asistencia desde QR escaneado"""
+    try:
+        datos = request.json
+        datos_qr = datos.get('qr_data')
+        
+        if not datos_qr:
+            return jsonify({'error': 'No se recibieron datos del QR'}), 400
+        
+        resultado = lector.registrar_asistencia(datos_qr)
+        return jsonify(resultado)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/estadisticas-hoy', methods=['GET'])
+def estadisticas_hoy_api():
+    """Obtener estadísticas del día actual"""
+    try:
+        total = lector.contar_registros_hoy()
+        ultimos = lector.obtener_ultimos_registros(5)
+        
+        return jsonify({
+            'success': True,
+            'total_hoy': total,
+            'ultimos_registros': ultimos
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/listar-archivos', methods=['GET'])
+def listar_archivos_api():
+    """Listar archivos de registro disponibles"""
+    try:
+        archivos = lector.listar_archivos_registro()
+        
+        return jsonify({
+            'success': True,
+            'archivos': archivos,
+            'total': len(archivos)
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/enviar-archivos', methods=['POST'])
+def enviar_archivos_api():
+    """Enviar archivos seleccionados a PC central"""
+    try:
+        datos = request.json
+        archivos = datos.get('archivos', [])
+        
+        if not archivos:
+            return jsonify({'error': 'No se seleccionaron archivos'}), 400
+        
+        # Obtener carpeta de destino desde config
+        carpeta_destino = config.CARPETA_COMPARTIDA
+        
+        # Enviar archivos
+        resultado = lector.enviar_multiples(archivos, carpeta_destino)
+        
+        return jsonify(resultado)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/verificar-red', methods=['GET'])
+def verificar_red_api():
+    """Verificar si la carpeta de red está disponible"""
+    try:
+        carpeta_destino = config.CARPETA_COMPARTIDA
+        disponible = os.path.exists(carpeta_destino)
+        
+        return jsonify({
+            'success': True,
+            'disponible': disponible,
+            'ruta': carpeta_destino
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'success': True,
+            'disponible': False,
+            'error': str(e)
+        })
 
 # ==================== MANEJO DE ERRORES ====================
 

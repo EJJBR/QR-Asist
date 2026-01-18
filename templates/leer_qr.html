@@ -2,28 +2,176 @@
 
 {% block title %}Leer QR - QR-Asist{% endblock %}
 
-{% block header %}Lector de Códigos QR{% endblock %}
+{% block header %}Lector de Códigos QR - Registro de Asistencias{% endblock %}
 
 {% block content %}
-<div class="placeholder-section">
-    <div class="card text-center">
-        <div class="icon-large">📷</div>
-        <h3>Módulo de Lectura de QR</h3>
-        <p>Este módulo estará disponible próximamente.</p>
-        <p class="help-text">Permitirá registrar la asistencia escaneando los códigos QR de los alumnos con la cámara.</p>
+<div class="lector-section">
+    
+    <!-- Sección principal: Cámara + Feedback -->
+    <div class="camara-container">
         
-        <div class="features-preview">
-            <h4>Características próximas:</h4>
-            <ul>
-                <li>✅ Escaneo en tiempo real con cámara web</li>
-                <li>✅ Registro automático de asistencias</li>
-                <li>✅ Prevención de duplicados (2 minutos)</li>
-                <li>✅ Feedback visual y sonoro</li>
-                <li>✅ Contador de asistencias del día</li>
-                <li>✅ Envío manual de registros a PC central</li>
-                <li>✅ Funciona 100% sin internet</li>
-            </ul>
+        <div class="camara-wrapper">
+            <div id="camaraBox" class="camara-box">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display: none;"></canvas>
+                
+                <div id="camaraEstado" class="camara-estado">
+                    <p>🎥 Iniciando cámara...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="feedback-panel">
+            <div id="feedbackVacio" class="feedback-vacio">
+                <p class="icon-large">👋</p>
+                <p>Esperando escaneo...</p>
+                <p class="help-text">Coloca el código QR frente a la cámara</p>
+            </div>
+            
+            <div id="feedbackExito" class="feedback-card feedback-exito" style="display: none;">
+                <div class="feedback-header">
+                    <span class="icon">✅</span>
+                    <h3>ENTRADA REGISTRADA</h3>
+                </div>
+                <div class="feedback-body">
+                    <p class="feedback-hora">🕐 <span id="feedbackHora">--:--:--</span></p>
+                    <p class="feedback-fecha">📅 <span id="feedbackFecha">--/--/----</span></p>
+                    <p class="feedback-alumno">👤 <span id="feedbackNombre">---</span></p>
+                    <p class="feedback-seccion">📚 <span id="feedbackSeccion">---</span></p>
+                </div>
+            </div>
+            
+            <div id="feedbackDuplicado" class="feedback-card feedback-duplicado" style="display: none;">
+                <div class="feedback-header">
+                    <span class="icon">⚠️</span>
+                    <h3>YA REGISTRADO</h3>
+                </div>
+                <div class="feedback-body">
+                    <p class="feedback-mensaje" id="feedbackMensajeDup">---</p>
+                    <p class="feedback-alumno">👤 <span id="feedbackNombreDup">---</span></p>
+                    <p class="feedback-seccion">📚 <span id="feedbackSeccionDup">---</span></p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Estadísticas del día -->
+    <div class="card">
+        <h3>📊 Estadísticas de hoy</h3>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <p class="stat-label">Total registrados:</p>
+                <p class="stat-value" id="totalHoy">0</p>
+            </div>
+            <div class="stat-item">
+                <p class="stat-label">Laptop:</p>
+                <p class="stat-value" id="laptopId">---</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Últimos registros -->
+    <div class="card">
+        <h3>📝 Últimos 5 registros</h3>
+        <div id="ultimosRegistros" class="ultimos-registros">
+            <p class="empty-state">No hay registros aún</p>
+        </div>
+    </div>
+    
+    <!-- Estado de red y envío -->
+    <div class="card">
+        <h3>📡 Estado de conexión</h3>
+        <div class="red-status">
+            <p id="redEstado" class="red-desconectado">
+                <span class="icon">❌</span>
+                <span>Sin conexión de red</span>
+            </p>
+            <p id="redInfo" class="help-text">Verificando...</p>
+        </div>
+        
+        <div class="actions-grid">
+            <button id="btnEnviarArchivos" class="btn btn-primary" disabled>
+                <span class="icon">📤</span>
+                Enviar registros
+            </button>
+            
+            <button id="btnDetener" class="btn btn-danger">
+                <span class="icon">🔴</span>
+                Detener lectura
+            </button>
+        </div>
+    </div>
+    
+</div>
+
+<!-- Modal: Enviar Archivos -->
+<div id="modalEnviar" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3>📤 Enviar registros a PC Central</h3>
+            <button class="modal-close" onclick="cerrarModalEnviar()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+            <p class="help-text">Selecciona los archivos que deseas enviar:</p>
+            
+            <div id="listaArchivosEnviar" class="archivos-lista">
+                <p class="empty-state">Cargando archivos...</p>
+            </div>
+            
+            <div class="modal-actions">
+                <button id="btnSeleccionarTodos" class="btn btn-secondary btn-small">
+                    ☑ Seleccionar todos
+                </button>
+                <button id="btnDeseleccionarTodos" class="btn btn-secondary btn-small">
+                    ☐ Deseleccionar todos
+                </button>
+            </div>
+            
+            <div class="destino-info">
+                <p class="help-text">
+                    <strong>📍 Destino:</strong> 
+                    <span id="rutaDestino">---</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModalEnviar()">
+                ❌ Cancelar
+            </button>
+            <button id="btnConfirmarEnvio" class="btn btn-success">
+                <span class="icon">📤</span>
+                Enviar seleccionados (<span id="contadorSeleccionados">0</span>)
+            </button>
         </div>
     </div>
 </div>
+
+<!-- Modal: Resultado de Envío -->
+<div id="modalResultado" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="resultadoTitulo">✅ Envío completado</h3>
+        </div>
+        
+        <div class="modal-body">
+            <div id="resultadoContenido">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="cerrarModalResultado()">
+                ✓ Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/leer_qr.js') }}"></script>
 {% endblock %}

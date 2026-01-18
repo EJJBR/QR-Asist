@@ -542,3 +542,440 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==================== MÓDULO 2: LECTOR QR ==================== */
+
+.lector-section {
+    max-width: 1400px;
+}
+
+.camara-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.camara-wrapper {
+    background: var(--dark);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.camara-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #000;
+    border: 4px solid var(--dark);
+    transition: border-color 0.3s ease;
+}
+
+.camara-box.camara-exito {
+    border-color: var(--success);
+    border-width: 6px;
+    animation: pulseGreen 0.5s ease;
+}
+
+.camara-box.camara-duplicado {
+    border-color: var(--warning);
+    border-width: 6px;
+    animation: pulseYellow 0.5s ease;
+}
+
+@keyframes pulseGreen {
+    0%, 100% { border-color: var(--success); }
+    50% { border-color: #34d399; }
+}
+
+@keyframes pulseYellow {
+    0%, 100% { border-color: var(--warning); }
+    50% { border-color: #fbbf24; }
+}
+
+.camara-box video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camara-estado {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--white);
+    text-align: center;
+    padding: 2rem;
+}
+
+.camara-estado p {
+    margin: 0.5rem 0;
+    font-size: 1.125rem;
+}
+
+/* Feedback Panel */
+
+.feedback-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.feedback-vacio {
+    background: var(--light-gray);
+    border-radius: 0.75rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--gray);
+}
+
+.feedback-vacio .icon-large {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.feedback-card {
+    background: var(--white);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.feedback-exito {
+    border-left: 6px solid var(--success);
+}
+
+.feedback-duplicado {
+    border-left: 6px solid var(--warning);
+}
+
+.feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--light-gray);
+}
+
+.feedback-header .icon {
+    font-size: 2rem;
+}
+
+.feedback-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--dark);
+}
+
+.feedback-body p {
+    margin: 0.75rem 0;
+    font-size: 1rem;
+}
+
+.feedback-hora,
+.feedback-fecha {
+    font-size: 0.938rem;
+    color: var(--gray);
+}
+
+.feedback-alumno {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.feedback-seccion {
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.feedback-mensaje {
+    font-size: 1rem;
+    color: var(--warning);
+    font-weight: 500;
+}
+
+/* Estadísticas */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--light-gray);
+    border-radius: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--gray);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+
+/* Últimos registros */
+
+.ultimos-registros {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.registro-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--light-gray);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.registro-hora {
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 80px;
+}
+
+.registro-nombre {
+    flex: 1;
+    color: var(--dark);
+}
+
+.registro-seccion {
+    color: var(--gray);
+    font-size: 0.875rem;
+}
+
+/* Estado de red */
+
+.red-status {
+    margin-bottom: 1.5rem;
+}
+
+.red-conectado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--success);
+    font-weight: 500;
+    font-size: 1.125rem;
+}
+
+.red-desconectado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--danger);
+    font-weight: 500;
+    font-size: 1.125rem;
+}
+
+/* Modal */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+}
+
+.modal-content {
+    background: var(--white);
+    border-radius: 0.75rem;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-large {
+    max-width: 800px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--dark);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--light-gray);
+    color: var(--dark);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+/* Lista de archivos */
+
+.archivos-lista {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 1rem 0;
+}
+
+.archivo-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s;
+}
+
+.archivo-item:hover {
+    border-color: var(--primary);
+    background: var(--light-gray);
+}
+
+.archivo-item.actual {
+    border-color: var(--primary);
+    background: rgba(79, 70, 229, 0.05);
+}
+
+.archivo-item.pendiente {
+    border-color: var(--warning);
+}
+
+.archivo-item.enviado {
+    border-color: var(--success);
+    opacity: 0.7;
+}
+
+.archivo-item input[type="checkbox"] {
+    margin-top: 0.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+}
+
+.archivo-item label {
+    flex: 1;
+    cursor: pointer;
+}
+
+.archivo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.archivo-nombre {
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0;
+}
+
+.archivo-detalles {
+    font-size: 0.875rem;
+    color: var(--gray);
+    margin: 0;
+}
+
+.archivo-estado {
+    font-size: 0.813rem;
+    color: var(--primary);
+    margin: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.destino-info {
+    padding: 1rem;
+    background: var(--light-gray);
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.error-item {
+    color: var(--danger);
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 0.25rem;
+    margin: 0.5rem 0;
+}
+
+/* Responsive para módulo lector */
+
+@media (max-width: 1024px) {
+    .camara-container {
+        grid-template-columns: 1fr;
+    }
+}
