@@ -53,7 +53,8 @@ const elementos = {
     rutaDestino: document.getElementById('rutaDestino'),
     contadorSeleccionados: document.getElementById('contadorSeleccionados'),
     resultadoTitulo: document.getElementById('resultadoTitulo'),
-    resultadoContenido: document.getElementById('resultadoContenido')
+    resultadoContenido: document.getElementById('resultadoContenido'),
+    btnConfirmarEnvio: document.getElementById('btnConfirmarEnvio')
 };
 
 // Sonido de beep (usando Web Audio API)
