@@ -12,7 +12,7 @@ REGISTROS_DIR = os.path.join(BASE_DIR, 'registro')
 REPORTES_DIR = os.path.join(BASE_DIR, 'reportes')
 
 # Configuración de red (para Módulo 2 - futuro)
-IP_CENTRAL = "192.168.1.100"  # IP de PC central (directora)
+IP_CENTRAL = "169.254.199.214"  # IP de PC central (directora)
 CARPETA_COMPARTIDA = f"\\\\{IP_CENTRAL}\\AsistenciasRecibidas"
 LAPTOP_ID = "LAPTOP_A"  # Cambiar en cada equipo
 
