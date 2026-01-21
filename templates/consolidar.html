@@ -2,28 +2,134 @@
 
 {% block title %}Consolidar - QR-Asist{% endblock %}
 
-{% block header %}Consolidación de Registros{% endblock %}
+{% block header %}Consolidación y Reportes{% endblock %}
 
 {% block content %}
-<div class="placeholder-section">
-    <div class="card text-center">
-        <div class="icon-large">📊</div>
-        <h3>Módulo de Consolidación</h3>
-        <p>Este módulo estará disponible próximamente.</p>
-        <p class="help-text">Permitirá consolidar todos los registros de las laptops y generar reportes en Excel.</p>
-        
-        <div class="features-preview">
-            <h4>Características próximas:</h4>
-            <ul>
-                <li>✅ Búsqueda automática de archivos nuevos</li>
-                <li>✅ Consolidación de múltiples laptops</li>
-                <li>✅ Detección de duplicados</li>
-                <li>✅ Ordenamiento cronológico</li>
-                <li>✅ Exportación a Excel con formato</li>
-                <li>✅ Reportes por grado y sección</li>
-                <li>✅ Estadísticas de asistencia</li>
-            </ul>
+<div class="consolidar-section">
+
+    <!-- Sección: Consolidación -->
+    <div class="card">
+        <h3>🔄 Consolidar Archivos</h3>
+        <p class="help-text">Procesa los archivos de asistencia y genera consolidados diarios</p>
+
+        <div class="stats-grid" style="margin-bottom: 1.5rem;">
+            <div class="stat-item">
+                <div class="stat-label">Carpeta Activa</div>
+                <div class="stat-value" id="carpetaActiva" style="font-size: 0.875rem;">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Consolidados</div>
+                <div class="stat-value" id="totalConsolidados">0</div>
+            </div>
+        </div>
+
+        <div class="actions-grid">
+            <button id="btnConsolidar" class="btn btn-primary">
+                <span class="icon">⚡</span>
+                Consolidar Todo
+            </button>
+            <button id="btnForzarConsolidar" class="btn btn-secondary">
+                <span class="icon">🔄</span>
+                Forzar Re-consolidación
+            </button>
+        </div>
+
+        <div id="estadoConsolidacion" class="card estado-card" style="display: none; margin-top: 1rem;">
+            <div id="estadoConsolidacionContenido"></div>
         </div>
     </div>
+
+    <!-- Sección: Filtros -->
+    <div class="card">
+        <h3>🔍 Filtros de Búsqueda</h3>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="fechaInicio">Fecha Inicio:</label>
+                <input type="date" id="fechaInicio" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label for="fechaFin">Fecha Fin:</label>
+                <input type="date" id="fechaFin" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label for="horaLimite">Hora Límite (Tardanzas):</label>
+                <input type="time" id="horaLimite" class="form-input" value="08:00">
+            </div>
+
+            <div class="form-group">
+                <label for="buscarAlumno">Buscar Alumno:</label>
+                <input type="text" id="buscarAlumno" class="form-input" placeholder="Nombre o ID...">
+            </div>
+        </div>
+
+        <div class="actions-grid" style="margin-top: 1rem;">
+            <button id="btnCargarDatos" class="btn btn-primary">
+                <span class="icon">📥</span>
+                Cargar Datos
+            </button>
+            <button id="btnAplicarFiltros" class="btn btn-secondary" disabled>
+                <span class="icon">🔍</span>
+                Aplicar Filtros
+            </button>
+            <button id="btnLimpiarFiltros" class="btn btn-secondary" disabled>
+                <span class="icon">🗑️</span>
+                Limpiar Filtros
+            </button>
+        </div>
+    </div>
+
+    <!-- Sección: Estadísticas -->
+    <div class="card">
+        <h3>📊 Estadísticas</h3>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">Total Registros</div>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Tardanzas</div>
+                <div class="stat-value" id="statTardanzas" style="color: var(--warning);">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Alumnos Únicos</div>
+                <div class="stat-value" id="statAlumnos">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Días Cargados</div>
+                <div class="stat-value" id="statDias">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección: Tabla de Resultados -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="margin: 0;">📋 Resultados</h3>
+            <button id="btnExportar" class="btn btn-success" disabled>
+                <span class="icon">📥</span>
+                Descargar Excel
+            </button>
+        </div>
+
+        <div id="tablaContainer">
+            <p class="empty-state">Carga datos seleccionando un rango de fechas y presionando "Cargar Datos"</p>
+        </div>
+
+        <!-- Paginación -->
+        <div id="paginacion" style="display: none; margin-top: 1rem; text-align: center;">
+            <button id="btnPaginaAnterior" class="btn btn-small btn-secondary">← Anterior</button>
+            <span id="infoPagina" style="margin: 0 1rem;">Página 1 de 1</span>
+            <button id="btnPaginaSiguiente" class="btn btn-small btn-secondary">Siguiente →</button>
+        </div>
+    </div>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/consolidar.js') }}"></script>
 {% endblock %}

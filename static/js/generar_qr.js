@@ -107,7 +107,7 @@ async function handleCSVUpload(e) {
     formData.append('archivo', file);
     
     try {
-        const response = await fetch('/api/cargar-csv', {
+        const response = await fetch('/api/cargar-archivo', {
             method: 'POST',
             body: formData
         });
@@ -125,7 +125,7 @@ async function handleCSVUpload(e) {
         Utils.showNotification(`✓ ${result.total} alumnos cargados`, 'success');
         
     } catch (error) {
-        Utils.showNotification(`Error al cargar CSV: ${error.message}`, 'error');
+        Utils.showNotification(`Error al cargar archivo: ${error.message}`, 'error');
     }
 }
 

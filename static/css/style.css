@@ -131,6 +131,15 @@ body {
     padding: 2rem;
     max-width: 1400px;
     width: 100%;
+    margin: 0 auto;
+    /* Centrar contenido */
+}
+
+/* Ajustes para pantallas grandes (2K/4K) */
+@media (min-width: 1921px) {
+    .content {
+        max-width: 1800px;
+    }
 }
 
 /* ==================== TARJETAS ==================== */
@@ -390,7 +399,9 @@ body {
 /* ==================== PÁGINA DE INICIO ==================== */
 
 .welcome-section {
-    max-width: 1200px;
+    max-width: 100%;
+    /* Aprovechar ancho completo del padre */
+    margin: 0 auto;
 }
 
 .welcome-card {
@@ -526,15 +537,15 @@ body {
     .sidebar {
         width: 200px;
     }
-    
+
     .main-content {
         margin-left: 200px;
     }
-    
+
     .content {
         padding: 1rem;
     }
-    
+
     .form-grid,
     .features-grid,
     .info-grid,
@@ -546,7 +557,8 @@ body {
 /* ==================== MÓDULO 2: LECTOR QR ==================== */
 
 .lector-section {
-    max-width: 1400px;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .camara-container {
@@ -585,13 +597,27 @@ body {
 }
 
 @keyframes pulseGreen {
-    0%, 100% { border-color: var(--success); }
-    50% { border-color: #34d399; }
+
+    0%,
+    100% {
+        border-color: var(--success);
+    }
+
+    50% {
+        border-color: #34d399;
+    }
 }
 
 @keyframes pulseYellow {
-    0%, 100% { border-color: var(--warning); }
-    50% { border-color: #fbbf24; }
+
+    0%,
+    100% {
+        border-color: var(--warning);
+    }
+
+    50% {
+        border-color: #fbbf24;
+    }
 }
 
 .camara-box video {
@@ -654,6 +680,7 @@ body {
         transform: translateX(20px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -875,6 +902,61 @@ body {
     gap: 1rem;
     padding: 1.5rem;
     border-top: 1px solid var(--border);
+}
+
+/* Tabla de reportes */
+.tabla-reportes {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.tabla-reportes thead {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+}
+
+.tabla-reportes th {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.813rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--primary-dark);
+}
+
+.tabla-reportes td {
+    padding: 0.875rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+}
+
+.tabla-reportes tbody tr {
+    transition: all 0.2s ease;
+}
+
+.tabla-reportes tbody tr:hover {
+    background: var(--light-gray);
+    transform: scale(1.01);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tabla-reportes tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-reportes tr.tardanza td {
+    background: rgba(245, 158, 11, 0.08);
+    border-left: 3px solid var(--warning);
+}
+
+.tabla-reportes tr.tardanza:hover td {
+    background: rgba(245, 158, 11, 0.15);
 }
 
 /* Lista de archivos */

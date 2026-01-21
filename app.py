@@ -12,6 +12,7 @@ import csv
 # Importar módulos del proyecto
 from modules.generador_qr import GeneradorQR
 from modules.lector_qr import LectorQR
+from modules.consolidador import Consolidador
 import config
 
 app = Flask(__name__)
@@ -32,6 +33,10 @@ os.makedirs(REPORTES_DIR, exist_ok=True)
 # Instanciar módulos
 generador = GeneradorQR()
 lector = LectorQR(laptop_id=config.LAPTOP_ID)
+consolidador = Consolidador(
+    carpeta_compartida=config.CARPETA_COMPARTIDA,
+    carpeta_consolidados=config.CONSOLIDADOS_DIR
+)
 
 # ==================== RUTAS DE PÁGINAS ====================
 
@@ -57,9 +62,9 @@ def consolidar_page():
 
 # ==================== API ENDPOINTS ====================
 
-@app.route('/api/cargar-csv', methods=['POST'])
-def cargar_csv():
-    """Cargar y leer archivo CSV de alumnos"""
+@app.route('/api/cargar-archivo', methods=['POST'])
+def cargar_archivo():
+    """Cargar y leer archivo CSV o Excel de alumnos"""
     try:
         if 'archivo' not in request.files:
             return jsonify({'error': 'No se envió ningún archivo'}), 400
@@ -69,23 +74,55 @@ def cargar_csv():
         if archivo.filename == '':
             return jsonify({'error': 'Nombre de archivo vacío'}), 400
         
-        if not archivo.filename.endswith('.csv'):
-            return jsonify({'error': 'El archivo debe ser CSV'}), 400
+        # Validar extensión
+        if not (archivo.filename.endswith('.csv') or archivo.filename.endswith('.xlsx')):
+            return jsonify({'error': 'El archivo debe ser CSV o Excel (.xlsx)'}), 400
         
-        # Leer contenido del CSV
-        contenido = archivo.read().decode('utf-8')
-        lineas = contenido.strip().split('\n')
-        
-        # Parsear CSV
-        reader = csv.DictReader(lineas)
         alumnos = []
         
-        for fila in reader:
-            if 'ID' in fila and 'NOMBRE_COMPLETO' in fila:
-                alumnos.append({
-                    'id': fila['ID'].strip(),
-                    'nombre': fila['NOMBRE_COMPLETO'].strip()
-                })
+        # Procesar según el tipo de archivo
+        if archivo.filename.endswith('.csv'):
+            # Leer contenido del CSV
+            contenido = archivo.read().decode('utf-8')
+            lineas = contenido.strip().split('\n')
+            
+            # Parsear CSV
+            reader = csv.DictReader(lineas)
+            
+            for fila in reader:
+                if 'ID' in fila and 'NOMBRE_COMPLETO' in fila:
+                    alumnos.append({
+                        'id': fila['ID'].strip(),
+                        'nombre': fila['NOMBRE_COMPLETO'].strip()
+                    })
+        
+        elif archivo.filename.endswith('.xlsx'):
+            # Importar openpyxl
+            from openpyxl import load_workbook
+            
+            # Cargar el archivo Excel
+            wb = load_workbook(archivo)
+            ws = wb.active
+            
+            # Leer encabezados (primera fila)
+            encabezados = []
+            for cell in ws[1]:
+                encabezados.append(cell.value)
+            
+            # Buscar índices de las columnas ID y NOMBRE_COMPLETO
+            try:
+                idx_id = encabezados.index('ID')
+                idx_nombre = encabezados.index('NOMBRE_COMPLETO')
+            except ValueError:
+                return jsonify({'error': 'El archivo Excel debe tener columnas ID y NOMBRE_COMPLETO'}), 400
+            
+            # Leer datos (desde la fila 2 en adelante)
+            for fila in ws.iter_rows(min_row=2, values_only=True):
+                if fila[idx_id] and fila[idx_nombre]:
+                    alumnos.append({
+                        'id': str(fila[idx_id]).strip(),
+                        'nombre': str(fila[idx_nombre]).strip()
+                    })
         
         return jsonify({
             'success': True,
@@ -273,6 +310,140 @@ def verificar_red_api():
             'disponible': False,
             'error': str(e)
         })
+
+# ==================== API MÓDULO 3: CONSOLIDADOR ====================
+
+@app.route('/api/consolidar-todo', methods=['POST'])
+def consolidar_todo_api():
+    """Ejecutar consolidación de todos los archivos"""
+    try:
+        datos = request.json or {}
+        forzar = datos.get('forzar', False)
+        
+        resultado = consolidador.consolidar_todo(forzar=forzar)
+        return jsonify(resultado)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/cargar-consolidados', methods=['POST'])
+def cargar_consolidados_api():
+    """Cargar consolidados en un rango de fechas"""
+    try:
+        datos = request.json
+        fecha_inicio_str = datos.get('fechaInicio')
+        fecha_fin_str = datos.get('fechaFin')
+        
+        if not fecha_inicio_str or not fecha_fin_str:
+            return jsonify({'error': 'Faltan fechas'}), 400
+        
+        # Parsear fechas
+        fecha_inicio = datetime.strptime(fecha_inicio_str, "%Y-%m-%d")
+        fecha_fin = datetime.strptime(fecha_fin_str, "%Y-%m-%d")
+        
+        # Cargar registros
+        registros = consolidador.cargar_consolidados(fecha_inicio, fecha_fin)
+        
+        return jsonify({
+            'success': True,
+            'registros': registros,
+            'total': len(registros)
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/listar-consolidados', methods=['GET'])
+def listar_consolidados_api():
+    """Listar todos los consolidados disponibles"""
+    try:
+        consolidados = consolidador.listar_consolidados()
+        
+        return jsonify({
+            'success': True,
+            'consolidados': consolidados,
+            'total': len(consolidados)
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/exportar-reporte', methods=['POST'])
+def exportar_reporte_api():
+    """Exportar reporte filtrado a Excel"""
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment
+        from io import BytesIO
+        
+        datos = request.json
+        registros = datos.get('registros', [])
+        
+        if not registros:
+            return jsonify({'error': 'No hay datos para exportar'}), 400
+        
+        # Crear libro Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Reporte de Asistencias"
+        
+        # Encabezados
+        headers = ['ID', 'Nombre Completo', 'Nivel', 'Grado', 'Sección', 
+                  'Fecha', 'Hora', 'Laptop']
+        ws.append(headers)
+        
+        # Estilo de encabezados
+        header_fill = PatternFill(start_color="4F46E5", end_color="4F46E5", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF")
+        
+        for cell in ws[1]:
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Datos
+        for registro in registros:
+            ws.append([
+                registro.get('ID', ''),
+                registro.get('NOMBRE_COMPLETO', ''),
+                registro.get('NIVEL', ''),
+                registro.get('GRADO', ''),
+                registro.get('SECCION', ''),
+                registro.get('FECHA', ''),
+                registro.get('HORA', ''),
+                registro.get('LAPTOP', '')
+            ])
+        
+        # Ajustar anchos de columna
+        ws.column_dimensions['A'].width = 10
+        ws.column_dimensions['B'].width = 30
+        ws.column_dimensions['C'].width = 12
+        ws.column_dimensions['D'].width = 8
+        ws.column_dimensions['E'].width = 10
+        ws.column_dimensions['F'].width = 12
+        ws.column_dimensions['G'].width = 10
+        ws.column_dimensions['H'].width = 12
+        
+        # Guardar en memoria (BytesIO) en lugar de disco
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # Generar nombre de archivo
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nombre_archivo = f"reporte_filtrado_{timestamp}.xlsx"
+        
+        # Enviar archivo directamente desde memoria
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=nombre_archivo
+        )
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 # ==================== MANEJO DE ERRORES ====================
 
