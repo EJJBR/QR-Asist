@@ -27,6 +27,9 @@ const elementos = {
     fechaFin: document.getElementById('fechaFin'),
     horaLimite: document.getElementById('horaLimite'),
     buscarAlumno: document.getElementById('buscarAlumno'),
+    filtroNivel: document.getElementById('filtroNivel'),
+    filtroGrado: document.getElementById('filtroGrado'),
+    filtroSeccion: document.getElementById('filtroSeccion'),
     btnCargarDatos: document.getElementById('btnCargarDatos'),
     btnAplicarFiltros: document.getElementById('btnAplicarFiltros'),
     btnLimpiarFiltros: document.getElementById('btnLimpiarFiltros'),
@@ -59,6 +62,9 @@ elementos.btnCargarDatos.addEventListener('click', cargarDatos);
 elementos.btnAplicarFiltros.addEventListener('click', aplicarFiltros);
 elementos.btnLimpiarFiltros.addEventListener('click', limpiarFiltros);
 elementos.buscarAlumno.addEventListener('input', aplicarFiltros);
+elementos.filtroNivel.addEventListener('change', aplicarFiltros);
+elementos.filtroGrado.addEventListener('change', aplicarFiltros);
+elementos.filtroSeccion.addEventListener('change', aplicarFiltros);
 elementos.horaLimite.addEventListener('change', () => {
     AppState.horaLimite = elementos.horaLimite.value + ':00';
     aplicarFiltros();
@@ -216,6 +222,9 @@ async function cargarDatos() {
             AppState.datosFiltrados = result.registros;
             AppState.paginaActual = 1;
 
+            // Poblar filtros dinámicos
+            poblarFiltrosGradoSeccion();
+
             actualizarTabla();
             actualizarEstadisticas();
 
@@ -238,21 +247,86 @@ async function cargarDatos() {
 }
 
 /**
+ * Poblar filtros de nivel, grado y sección con valores únicos
+ */
+function poblarFiltrosGradoSeccion() {
+    // Obtener valores únicos de nivel
+    const nivelesUnicos = [...new Set(AppState.datosCompletos.map(r => r.NIVEL))]
+        .filter(n => n)
+        .sort();
+
+    // Obtener valores únicos de grado
+    const gradosUnicos = [...new Set(AppState.datosCompletos.map(r => r.GRADO))]
+        .filter(g => g) // Eliminar valores vacíos
+        .sort();
+
+    // Obtener valores únicos de sección
+    const seccionesUnicas = [...new Set(AppState.datosCompletos.map(r => r.SECCION))]
+        .filter(s => s) // Eliminar valores vacíos
+        .sort();
+
+    // Poblar dropdown de nivel
+    elementos.filtroNivel.innerHTML = '<option value="">Todos los niveles</option>';
+    nivelesUnicos.forEach(nivel => {
+        const option = document.createElement('option');
+        option.value = nivel;
+        option.textContent = nivel;
+        elementos.filtroNivel.appendChild(option);
+    });
+
+    // Poblar dropdown de grado
+    elementos.filtroGrado.innerHTML = '<option value="">Todos los grados</option>';
+    gradosUnicos.forEach(grado => {
+        const option = document.createElement('option');
+        option.value = grado;
+        option.textContent = grado;
+        elementos.filtroGrado.appendChild(option);
+    });
+
+    // Poblar dropdown de sección
+    elementos.filtroSeccion.innerHTML = '<option value="">Todas las secciones</option>';
+    seccionesUnicas.forEach(seccion => {
+        const option = document.createElement('option');
+        option.value = seccion;
+        option.textContent = seccion;
+        elementos.filtroSeccion.appendChild(option);
+    });
+}
+
+/**
  * Aplicar filtros a los datos
  */
 function aplicarFiltros() {
     if (AppState.datosCompletos.length === 0) return;
 
     const busqueda = elementos.buscarAlumno.value.toLowerCase();
+    const nivelSeleccionado = elementos.filtroNivel.value;
+    const gradoSeleccionado = elementos.filtroGrado.value;
+    const seccionSeleccionada = elementos.filtroSeccion.value;
 
     AppState.datosFiltrados = AppState.datosCompletos.filter(registro => {
-        // Filtro de búsqueda (este sí filtra)
+        // Filtro de búsqueda por nombre o ID
         if (busqueda) {
             const nombre = registro.NOMBRE_COMPLETO.toLowerCase();
             const id = registro.ID.toLowerCase();
             if (!nombre.includes(busqueda) && !id.includes(busqueda)) {
                 return false;
             }
+        }
+
+        // Filtro por nivel
+        if (nivelSeleccionado && registro.NIVEL !== nivelSeleccionado) {
+            return false;
+        }
+
+        // Filtro por grado
+        if (gradoSeleccionado && registro.GRADO !== gradoSeleccionado) {
+            return false;
+        }
+
+        // Filtro por sección
+        if (seccionSeleccionada && registro.SECCION !== seccionSeleccionada) {
+            return false;
         }
 
         // La hora límite NO filtra, solo resalta visualmente en la tabla
@@ -269,6 +343,9 @@ function aplicarFiltros() {
  */
 function limpiarFiltros() {
     elementos.buscarAlumno.value = '';
+    elementos.filtroNivel.value = '';
+    elementos.filtroGrado.value = '';
+    elementos.filtroSeccion.value = '';
     elementos.horaLimite.value = '08:00';
     AppState.horaLimite = '08:00:00';
 
